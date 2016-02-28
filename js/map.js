@@ -102,13 +102,14 @@ var infobox = new InfoBox({
 	pixelOffset: new google.maps.Size(15, -30),
 	zIndex: null,
 	boxStyle: {
-		background: "url('http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/examples/tipbox.gif') no-repeat",
+		//background: "url('http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/examples/tipbox.gif') no-repeat",
 		opacity: 0.9,
 		width: "100px"
 	},
 	closeBoxMargin: "-5px -5px 0 0",
 	//closeBoxURL: "images/close_cross.png",
 	infoBoxClearance: new google.maps.Size(1, 1)
+	//enableEventPropagation: false  // stop events to be propagated to the map
 });
 
 var mapStyles = [
@@ -194,11 +195,16 @@ function setMarkers(map, locations, oms) {
             position: myLatLng,
             map: map
         });
+		
+		var boxText = document.createElement("div");
+		boxText.style.cssText = "display: inline-block; text-align: center; width: 80px; height: 80px; margin-right: 5px;";
+		//boxText.className = "";
+		boxText.innerHTML = '<img src="images/logos/' + locations[i][4] + '" class="logo" /><br/>' + locations[i][0];
 
-        var content = '<div style="display: inline;"><img src="images/logos/' + locations[i][4] + '" class="logo" /><br/>' + locations[i][0] + "</div>" + '\r\n';
+        //var content = '<div style="display: inline;"><img src="images/logos/' + locations[i][4] + '" class="logo" /><br/>' + locations[i][0] + "</div>" + '\r\n';
         marker.box_id = locations[i][3];
         marker.lat = locations[i][1];
-		marker.content = content;
+		marker.content = boxText.outerHTML;
 
         /*google.maps.event.addListener(marker, 'mouseover', (function (marker, content, infobox) {
             return function () {
@@ -221,24 +227,28 @@ function setMarkers(map, locations, oms) {
             return function () {
                 var markers = []; // array
                 markers = oms.markersNearMarker(marker, false); //the second parameter defines if only the first marker will be returned;
+				var myContent = "";
                 if (markers.length <= 0) {
                     //google.maps.event.trigger(marker, 'click');
                     //infobox.setContent(content);
-					infobox.setContent(marker.content);
-                    infobox.open(map, marker);
-
-                    $('.info-container').hide();
-                    $('#box-' + marker.box_id).fadeIn();
+					myContent = marker.content;
                 } else {
 					var contentForInfobox = [];
 					for (myMarker of markers) {
 						contentForInfobox.push(myMarker.content);
 					}
 					contentForInfobox.push(marker.content);
-					infobox.setContent(contentForInfobox.join(""));
-					infobox.open(map, marker);
-					//console.log(infobox.getContent());
+					myContent = contentForInfobox.join("");
 				}
+				
+					infobox.setContent(myContent);
+                    infobox.open(map, marker);
+
+					console.log(infobox);
+					console.log(infobox.getContent());
+					
+                    $('.info-container').hide();
+                    $('#box-' + marker.box_id).fadeIn();
             };
         })(marker, infobox));
 
@@ -251,29 +261,29 @@ function setMarkers(map, locations, oms) {
         };
         })(marker, content, infobox));*/
 
-
-
-
-
-        //markersNearMarker(marker, firstOnly)
-
         oms.addMarker(marker);
     }
 
+	/*infobox.addListener("domready", function() {
+		infobox.on("mouseout", function() { google.maps.event.trigger(infobox, 'closeclick'); });
+	 });*/
 
-    oms.addListener('unspiderfy', function (markers) {
+	oms.addListener('unspiderfy', function (markers) {
         $('.info-container').hide();
         $('#box-0').fadeIn();
         infobox.close();
     });
-
+	
+	map.addListener('click', function() {
+		google.maps.event.trigger(infobox, 'closeclick');
+	  });
+	
     google.maps.event.addListener(infobox, 'closeclick', (function (infobox, oms) {
         return function () {
+			$('.info-container').hide();
+			$('#box-0').fadeIn();
+			infobox.close();
             //oms.unspiderfy();
-            //$('.info-container').hide();
-            //$('#box-0').fadeIn();
-            //infobox.close();
-            oms.unspiderfy();
         };
     })(infobox, oms));
 
