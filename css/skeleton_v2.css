@@ -77,6 +77,10 @@
   .two-thirds.column              { width: 65.3333333333%; }
 
   .one-half.column                { width: 48%; }
+  
+  /*Martin*/
+  .eight.half.columns 	{ width: 74%;}
+  .three.half.columns 	{ width: 26%;}
 
   /* Offsets */
   .offset-by-one.column,

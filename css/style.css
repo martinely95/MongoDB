@@ -22,3 +22,19 @@ p {
 	font-weight:normal;
 	color:000000;
 	}
+
+.map_without_inner_box {
+	/*width: 710px;*/
+}
+
+.box_without_map {	
+	
+}
+
+.map_and_box div {
+	width: 100%;
+	position: relative;
+	display: block;
+	margin: 0px;
+	border-radius: initial;
+}
