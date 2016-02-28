@@ -24,11 +24,11 @@ p {
 	}
 
 .map_without_inner_box {
-	/*width: 710px;*/
+	border-radius: 20px 0 0 20px;
 }
 
 .box_without_map {	
-	
+	border-radius: 0 20px 20px 0;
 }
 
 .map_and_box div {
@@ -36,5 +36,11 @@ p {
 	position: relative;
 	display: block;
 	margin: 0px;
-	border-radius: initial;
+	/*border-radius: initial;*/
+}
+
+.multi {
+	border:1px solid #8ec4e9;
+	border-radius: 5px;
+	
 }

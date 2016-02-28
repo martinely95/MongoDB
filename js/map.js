@@ -1,21 +1,22 @@
 function initialize() {
     var map = new google.maps.Map(
 		document.getElementById("map"), {
-		    center: new google.maps.LatLng(49.5, 26),
+		    center: new google.maps.LatLng(49.5, 20),
 		    zoom: 4,
 		    scrollwheel: false,
 		    panControl: false,
 		    draggable: true,
-		    panControlOptions: {
+		    /*panControlOptions: {
 		        position: google.maps.ControlPosition.TOP_RIGHT
-		    },
+		    },*/
 		    streetViewControl: false,
 		    mapTypeControl: false,
-		    zoomControl: true,
-		    zoomControlOptions: {
+		    zoomControl: false,  // Not needed
+		    /*zoomControlOptions: {
 		        style: google.maps.ZoomControlStyle.DEFAULT,
-		        position: google.maps.ControlPosition.LEFT_TOP
-		    },
+		        position: google.maps.ControlPosition.RIGHT_BOTTOM
+		    },*/
+			disableDoubleClickZoom: true,
 		    mapTypeControlOptions: {
 		        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
 		        position: google.maps.ControlPosition.TOP_RIGHT
@@ -24,7 +25,7 @@ function initialize() {
 		    styles: mapStyles
 		});
 
-    var oms = new OverlappingMarkerSpiderfier(map, { nearbyDistance: 2, circleSpiralSwitchover: Infinity, legWeight: 1 });
+    var oms = new OverlappingMarkerSpiderfier(map, { nearbyDistance: 2, circleSpiralSwitchover: Infinity, legWeight: 1 });//, noSpidify: false });
 
     setMarkers(map, locations, oms);
 
@@ -94,14 +95,15 @@ var locations = [
 //var infowindow = new google.maps.InfoWindow();
 var infobox = new InfoBox({
 	content: document.getElementById("infobox"),
-	disableAutoPan: true,
-	maxWidth: 150,
-	boxClass: "testtest",
-	pixelOffset: new google.maps.Size(-50, 0),
+	disableAutoPan: true, //focus screen on infobox
+	//maxWidth: 400,
+	//minWidth: 100,
+	boxClass: "infoBox multi",
+	pixelOffset: new google.maps.Size(15, -30),
 	zIndex: null,
 	boxStyle: {
 		background: "url('http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/examples/tipbox.gif') no-repeat",
-		opacity: 1,
+		opacity: 0.9,
 		width: "100px"
 	},
 	closeBoxMargin: "-5px -5px 0 0",
@@ -193,12 +195,12 @@ function setMarkers(map, locations, oms) {
             map: map
         });
 
-        var content = '<img src="images/logos/' + locations[i][4] + '" class="logo" /><br/>' + locations[i][0];
+        var content = '<div style="display: inline;"><img src="images/logos/' + locations[i][4] + '" class="logo" /><br/>' + locations[i][0] + "</div>" + '\r\n';
         marker.box_id = locations[i][3];
         marker.lat = locations[i][1];
-		//marker.content = '<img src="images/logos/' + locations[i][4] + '" class="logo" /><br/>' + locations[i][0];
+		marker.content = content;
 
-        google.maps.event.addListener(marker, 'mouseover', (function (marker, content, infobox) {
+        /*google.maps.event.addListener(marker, 'mouseover', (function (marker, content, infobox) {
             return function () {
                 var isGroup = []; // array
                 isGroup = oms.markersNearMarker(marker, false); //the second parameter defines if only the first marker will be returned;
@@ -213,7 +215,32 @@ function setMarkers(map, locations, oms) {
 					
 				}
             };
-        })(marker, content, infobox));
+        })(marker, content, infobox));*/
+		
+		google.maps.event.addListener(marker, 'mouseover', (function (marker, infobox) {
+            return function () {
+                var markers = []; // array
+                markers = oms.markersNearMarker(marker, false); //the second parameter defines if only the first marker will be returned;
+                if (markers.length <= 0) {
+                    //google.maps.event.trigger(marker, 'click');
+                    //infobox.setContent(content);
+					infobox.setContent(marker.content);
+                    infobox.open(map, marker);
+
+                    $('.info-container').hide();
+                    $('#box-' + marker.box_id).fadeIn();
+                } else {
+					var contentForInfobox = [];
+					for (myMarker of markers) {
+						contentForInfobox.push(myMarker.content);
+					}
+					contentForInfobox.push(marker.content);
+					infobox.setContent(contentForInfobox.join(""));
+					infobox.open(map, marker);
+					//console.log(infobox.getContent());
+				}
+            };
+        })(marker, infobox));
 
         /*google.maps.event.addListener(marker, 'mouseout', (function (marker, content, infobox) {
         return function () {
@@ -251,6 +278,11 @@ function setMarkers(map, locations, oms) {
     })(infobox, oms));
 
 
-    map.fitBounds(bounds);
-	//console.log(bounds);
+	oms.addListener('spiderfy', function(markers) {
+	  infobox.close();
+	});
+	
+	//map.bounds = bounds;  // So that I can use them later
+    //map.fitBounds(bounds);
+	//console.log(map.bounds);
 }
