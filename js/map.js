@@ -103,8 +103,8 @@ var infobox = new InfoBox({
 	zIndex: null,
 	boxStyle: {
 		//background: "url('http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/examples/tipbox.gif') no-repeat",
-		opacity: 0.9,
-		width: "100px"
+		opacity: 0.9//,
+		//width: "90px"
 	},
 	closeBoxMargin: "-5px -5px 0 0",
 	//closeBoxURL: "images/close_cross.png",
@@ -197,13 +197,24 @@ function setMarkers(map, locations, oms) {
         });
 		
 		var boxText = document.createElement("div");
-		boxText.style.cssText = "display: inline-block; text-align: center; width: 80px; height: 80px; margin-right: 5px;";
+		//boxText.addEventListener("mouseover", getCompanyInfo, false);
+		//boxText.addEventListener("mouseout", resetCompanyInfo, false);
+		//onmouseover="bigImg(this)"
+		boxText.style.cssText = "float: left; display: inline-block; text-align: center; width: 80px; height: 85px;";
 		//boxText.className = "";
-		boxText.innerHTML = '<img src="images/logos/' + locations[i][4] + '" class="logo" /><br/>' + locations[i][0];
 
+		var companyName = document.createElement("div");
+		companyName.style.cssText = "height: 28px;"
+		companyName.innerHTML = locations[i][0];
+		
+		
+		
         //var content = '<div style="display: inline;"><img src="images/logos/' + locations[i][4] + '" class="logo" /><br/>' + locations[i][0] + "</div>" + '\r\n';
         marker.box_id = locations[i][3];
         marker.lat = locations[i][1];
+		
+		boxText.innerHTML = '<img onmouseover="getCompanyInfo(' + locations[i][3] + ')" onmouseout="resetCompanyInfo()" src="images/logos/' + locations[i][4] + '" class="logo" /><br/>' + companyName.outerHTML;
+		
 		marker.content = boxText.outerHTML;
 
         /*google.maps.event.addListener(marker, 'mouseover', (function (marker, content, infobox) {
@@ -244,8 +255,8 @@ function setMarkers(map, locations, oms) {
 					infobox.setContent(myContent);
                     infobox.open(map, marker);
 
-					console.log(infobox);
-					console.log(infobox.getContent());
+					//console.log(infobox);
+					//console.log(infobox.getContent());
 					
                     $('.info-container').hide();
                     $('#box-' + marker.box_id).fadeIn();

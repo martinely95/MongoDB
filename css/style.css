@@ -42,9 +42,8 @@ p {
 .multi {
 	border:1px solid #8ec4e9;
 	border-radius: 5px;
-	width: 300px;
-	min-width: 300px;
-	max-width: 300px;
+	min-width: 90px;
+	max-width: 500px;
 	text-align: left;
 	padding: 5px;
 }

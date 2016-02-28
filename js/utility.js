@@ -72,3 +72,15 @@ function hideIfLoggedIn() {
 	}
 }
 
+function getCompanyInfo(boxID) {
+	$('.info-container').hide();
+	$('#box-' + boxID).fadeIn();
+	//console.log("Hi!");
+	//TODO
+}
+function resetCompanyInfo() {
+	$('.info-container').hide();
+	$('#box-0').fadeIn();
+	document.getElementsByClassName("infoBox").close();
+}
+
