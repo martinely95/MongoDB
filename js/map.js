@@ -1,9 +1,11 @@
 $.getScript("js/utility.js");
 
+var mapCenter = new google.maps.LatLng(49.5, 20);
+
 function initialize() {
     var map = new google.maps.Map(
 		document.getElementById("map"), {
-		    center: new google.maps.LatLng(49.5, 20),
+		    center: mapCenter,
 		    zoom: 4,
 		    scrollwheel: false,
 		    panControl: false,
@@ -100,7 +102,8 @@ var infobox = new InfoBox({
 	//maxWidth: 400,
 	//minWidth: 100,
 	boxClass: "infoBox multi",
-	pixelOffset: new google.maps.Size(15, -30),
+	position: new google.maps.LatLng(49.5, 20), 
+	//pixelOffset: new google.maps.Size(15, -30),
 	zIndex: null,
 	boxStyle: {
 		//background: "url('http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/examples/tipbox.gif') no-repeat",
@@ -201,39 +204,20 @@ function setMarkers(map, locations, oms) {
 		//boxText.addEventListener("mouseover", getCompanyInfo, false);
 		//boxText.addEventListener("mouseout", resetCompanyInfo, false);
 		//onmouseover="bigImg(this)"
-		boxText.style.cssText = "float: left; display: inline-block; text-align: center; width: 80px; height: 85px;";
+		boxText.style.cssText = "float: left; display: inline-block; text-align: center; width: 80px; height: 100px;";
 		//boxText.className = "";
 
 		var companyName = document.createElement("div");
-		companyName.style.cssText = "height: 28px;"
+		companyName.style.cssText = "height: 42px;"
 		companyName.innerHTML = locations[i][0];
-		
-		
 		
         //var content = '<div style="display: inline;"><img src="images/logos/' + locations[i][4] + '" class="logo" /><br/>' + locations[i][0] + "</div>" + '\r\n';
         marker.box_id = locations[i][3];
         marker.lat = locations[i][1];
 		
 		boxText.innerHTML = '<img onmouseover="getCompanyInfo(' + locations[i][3] + ')" src="images/logos/' + locations[i][4] + '" class="logo" /><br/>' + companyName.outerHTML;
-		
+
 		marker.content = boxText.outerHTML;
-
-        /*google.maps.event.addListener(marker, 'mouseover', (function (marker, content, infobox) {
-            return function () {
-                var isGroup = []; // array
-                isGroup = oms.markersNearMarker(marker, false); //the second parameter defines if only the first marker will be returned;
-                if (isGroup.length <= 0) {
-                    google.maps.event.trigger(marker, 'click');
-                    infobox.setContent(content);
-                    infobox.open(map, marker);
-
-                    $('.info-container').hide();
-                    $('#box-' + marker.box_id).fadeIn();
-                } else {
-					
-				}
-            };
-        })(marker, content, infobox));*/
 		
 		google.maps.event.addListener(marker, 'mouseover', (function (marker, infobox) {
             return function () {
@@ -252,25 +236,21 @@ function setMarkers(map, locations, oms) {
 					contentForInfobox.push(marker.content);
 					myContent = contentForInfobox.join("");
 				}
+				//console.log(infobox.getPosition());
+				//infobox.pixelOffset = new google.maps.Size((mapCenter.lat() + 15) / 2, (mapCenter.lng() - 30) / 2);
+				//infobox.setPosition(new google.maps.LatLng(mapCenter.lat(), mapCenter.lng()));
 				
-					infobox.setContent(myContent);
-                    infobox.open(map, marker);
-
-					//console.log(infobox);
-					//console.log(infobox.getContent());
-					
-					getCompanyInfo(marker.box_id);
+				
+				infobox.setContent(myContent);
+				infobox.open(map, marker);
+				
+				getCompanyInfo(marker.box_id);
+				// lng -
+				// lat |
+				infobox.setPosition(new google.maps.LatLng((mapCenter.lat() + 10.5), (mapCenter.lng() - 8)));
+								
             };
         })(marker, infobox));
-
-        /*google.maps.event.addListener(marker, 'mouseout', (function (marker, content, infobox) {
-        return function () {
-        //oms.unspiderfy();
-        //$('.info-container').hide();
-        //$('#box-0').fadeIn();
-        //infobox.close();
-        };
-        })(marker, content, infobox));*/
 
         oms.addMarker(marker);
     }
