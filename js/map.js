@@ -1,3 +1,5 @@
+$.getScript("js/utility.js");
+
 function initialize() {
     var map = new google.maps.Map(
 		document.getElementById("map"), {
@@ -33,8 +35,7 @@ function initialize() {
         $('#bim').animate({ 'opacity': 1 });
         $('#bim').removeClass('hidden');
     }
-    $('.info-container').hide();
-    $('#box-0').fadeIn();
+    resetCompanyInfo();
 }
 
 google.maps.event.addDomListener(window, "load", initialize);
@@ -213,7 +214,7 @@ function setMarkers(map, locations, oms) {
         marker.box_id = locations[i][3];
         marker.lat = locations[i][1];
 		
-		boxText.innerHTML = '<img onmouseover="getCompanyInfo(' + locations[i][3] + ')" onmouseout="resetCompanyInfo()" src="images/logos/' + locations[i][4] + '" class="logo" /><br/>' + companyName.outerHTML;
+		boxText.innerHTML = '<img onmouseover="getCompanyInfo(' + locations[i][3] + ')" src="images/logos/' + locations[i][4] + '" class="logo" /><br/>' + companyName.outerHTML;
 		
 		marker.content = boxText.outerHTML;
 
@@ -258,8 +259,7 @@ function setMarkers(map, locations, oms) {
 					//console.log(infobox);
 					//console.log(infobox.getContent());
 					
-                    $('.info-container').hide();
-                    $('#box-' + marker.box_id).fadeIn();
+					getCompanyInfo(marker.box_id);
             };
         })(marker, infobox));
 
@@ -280,8 +280,7 @@ function setMarkers(map, locations, oms) {
 	 });*/
 
 	oms.addListener('unspiderfy', function (markers) {
-        $('.info-container').hide();
-        $('#box-0').fadeIn();
+		resetCompanyInfo();
         infobox.close();
     });
 	
@@ -291,8 +290,7 @@ function setMarkers(map, locations, oms) {
 	
     google.maps.event.addListener(infobox, 'closeclick', (function (infobox, oms) {
         return function () {
-			$('.info-container').hide();
-			$('#box-0').fadeIn();
+			resetCompanyInfo();
 			infobox.close();
             //oms.unspiderfy();
         };
